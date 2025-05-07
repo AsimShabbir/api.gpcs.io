@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::put('update_label', [GenerateCodeController::class,'update_label']);
     Route::put('delete_gpc', [GenerateCodeController::class,'delete_gpc']);
     Route::get('get_users_all_gpcs', [GenerateCodeController::class,'get_users_all_gpcs']);
+    Route::get('get_gpcs_counts', [GenerateCodeController::class,'get_gpcs_counts']);
 
 });
 Route::post('/sms/send', [SMSController::class, 'sendSMS']);

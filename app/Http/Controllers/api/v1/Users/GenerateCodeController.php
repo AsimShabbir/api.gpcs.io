@@ -67,7 +67,6 @@ class GenerateCodeController extends BaseController
 
         $auth_user = Auth::User();
         $user_id = $auth_user->id;
-
         $first_code="";
         $second_code="";
         $latitude = $request->latitude;
@@ -248,5 +247,17 @@ class GenerateCodeController extends BaseController
          //dd($GpscCodeGenerationHistoryRequest . '----'. $GpscCodeGenerationRequest);
             $GpscCodeGenerationHistoryRequest->save();
 
+    }
+    public function get_gpcs_counts(Request $request)
+    {
+        try
+        {
+            $auth_user = Auth::User();
+            $user_id = $auth_user->id;
+            $gpcs_codes_count = GpcsCode::where('user_id', $user_id)->where('is_deleted','=','0')->count();
+            return $this->renderResponse('Success',['success' => 'Total GPCS','data' =>$gpcs_codes_count],StatusCode::OK);
+        } catch (QueryException $exception) {
+            return $this->renderResponseWithErrors('Error', ['error'=> 'Something went wrong!'], StatusCode::UNPROCESSABLE_ENTITY);
+        }
     }
 }
