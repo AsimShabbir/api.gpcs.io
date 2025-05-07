@@ -28,6 +28,7 @@ Route::get('getcountrycodefromopenstreetmap',[GetCountryCodeFromOpenStreetMapCon
 Route::get('getcountrycodefromgooglemap',[GetCountryCodeFromGoogleMapController::class,'getCountryCodeFromGoogleMap']);
 Route::get('getcountrycodefromdomain',[GetCountryCodeFromDomainController::class,'getCountryCodeFromDomain']);
 Route::post('signup',[RegistrationsController::class,'registration']);
+Route::post('verify_user_otp',[RegistrationsController::class,'verify_user_otp']);
 Route::post('login', [AuthController::class, 'signin']);
 Route::middleware('auth:sanctum')->group( function () {
     Route::get('codes', [GenerateCodeController::class,'index']);

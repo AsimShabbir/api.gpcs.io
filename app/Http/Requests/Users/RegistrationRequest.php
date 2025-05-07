@@ -30,6 +30,7 @@ class RegistrationRequest extends FormRequest
             'contact_number' => 'required|string|max:255|unique:users',
             'role_id' => 'required|integer|max:9999999',
             'password' => 'nullable|string|max:255',
+            'verified' => ['nullable', 'integer', 'max:1', 'default:0'],
 
         ];
     }
