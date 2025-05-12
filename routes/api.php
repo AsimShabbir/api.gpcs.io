@@ -10,6 +10,7 @@ use App\Http\Controllers\api\v1\Users\RegistrationsController;
 use App\Http\Controllers\api\v1\GetCountryCodeFromDomainController;
 use App\Http\Controllers\api\v1\Users\AuthController;
 use App\Http\Controllers\api\v1\Users\GenerateCodeController;
+use App\Http\Controllers\api\v1\Users\StripePaymentController;
 use App\Http\Controllers\api\v1\SMSController;
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::put('delete_gpc', [GenerateCodeController::class,'delete_gpc']);
     Route::get('get_users_all_gpcs', [GenerateCodeController::class,'get_users_all_gpcs']);
     Route::get('get_gpcs_counts', [GenerateCodeController::class,'get_gpcs_counts']);
-
+    //Route::post('stripe_payment', [StripePaymentController::class, 'processOneTimeDonation']);
 });
+Route::post('stripe_payment', [StripePaymentController::class, 'processOneTimeDonation']);
 Route::post('/sms/send', [SMSController::class, 'sendSMS']);
