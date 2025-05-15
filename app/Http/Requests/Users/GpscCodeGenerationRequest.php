@@ -32,7 +32,9 @@ class GpscCodeGenerationRequest extends FormRequest
             'longitude' => 'nullable|numeric',
             'label' => 'nullable|string|max:5000',
             'is_deleted' => 'nullable|integer|max:5000',
-            'verified' => ['nullable', 'integer', 'max:1', 'default:0'],
+            'verified' => 'nullable'|'integer'|'max:2',
+            'paid' => 'nullable'|'integer'|'max:2',
+            'amount' => 'nullable'|'integer'|'max:99999',
 
         ];
     }

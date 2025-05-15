@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\GpcsCode;
+use App\Models\GpcsPaymentCharge;
 use App\Http\Requests\GpscRequest;
 use App\Models\GpcsCodesHistory;
 
@@ -26,9 +27,9 @@ class GenerateCodeController extends BaseController
     use GenerateGPCSCode,GetCountryCodeFromDomain,GetCountryCodeFromGoogleMap;
     protected $GpscCodeGenerationHistoryRequest;
     //
-    public function __construct(GpscCodeGenerationHistoryRequest $GpscCodeGenerationHistoryRequest)
+    public function __construct()//GpscCodeGenerationHistoryRequest $GpscCodeGenerationHistoryRequest)
     {
-        $this->$GpscCodeGenerationHistoryRequest = $GpscCodeGenerationHistoryRequest;
+      //  $this->$GpscCodeGenerationHistoryRequest = $GpscCodeGenerationHistoryRequest;
     }
     public function index(Request $request)
     {
@@ -70,10 +71,19 @@ class GenerateCodeController extends BaseController
         $first_code="";
         $second_code="";
         $latitude = $request->latitude;
-         $longitude = $request->longitude;
-         $domain = $request->domain;
-         $label = $request->label;
-         $country_code = "";
+        $longitude = $request->longitude;
+        $domain = $request->domain;
+        $label = $request->label;
+        $country_code = "";
+        $paid=$request->paid;
+        $amount =0;
+        if($paid == 1)
+        {
+            $gpcsPaymentCharge = GpcsPaymentCharge::where('is_active','=','1')->firstOrFail();
+            //dd($gpcsPaymentCharge);
+            $amount = $gpcsPaymentCharge->amount;
+        }
+
          //dd($domain);
          if(isset($domain))
          {
@@ -123,6 +133,9 @@ class GenerateCodeController extends BaseController
           $GpscCodeGenerationRequest->longitude = $longitude;
           $GpscCodeGenerationRequest->label = $label;
           $GpscCodeGenerationRequest->is_deleted=0;
+          $GpscCodeGenerationRequest->paid=$paid;
+          $GpscCodeGenerationRequest->amount=$amount;
+
           $GpscCodeGenerationRequest->save();
           $latestGpcsCode = GpcsCode::where('user_id', $user_id)
             ->latest() // Orders by created_at DESC
@@ -244,6 +257,9 @@ class GenerateCodeController extends BaseController
             $GpscCodeGenerationHistoryRequest->label = $GpscCodeGenerationRequest->label;
             $GpscCodeGenerationHistoryRequest->is_deleted=$GpscCodeGenerationRequest->is_deleted;
             $GpscCodeGenerationHistoryRequest->verified=$GpscCodeGenerationRequest->verified;
+            $GpscCodeGenerationHistoryRequest->paid=$GpscCodeGenerationRequest->paid;
+            $GpscCodeGenerationHistoryRequest->amount=$GpscCodeGenerationRequest->amount;
+
          //dd($GpscCodeGenerationHistoryRequest . '----'. $GpscCodeGenerationRequest);
             $GpscCodeGenerationHistoryRequest->save();
 

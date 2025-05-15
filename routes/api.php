@@ -11,6 +11,7 @@ use App\Http\Controllers\api\v1\GetCountryCodeFromDomainController;
 use App\Http\Controllers\api\v1\Users\AuthController;
 use App\Http\Controllers\api\v1\Users\GenerateCodeController;
 use App\Http\Controllers\api\v1\Users\StripePaymentController;
+use App\Http\Controllers\api\v1\Admin\GPCSPaymentChargeController;
 use App\Http\Controllers\api\v1\SMSController;
 /*
 |--------------------------------------------------------------------------
@@ -43,3 +44,11 @@ Route::middleware('auth:sanctum')->group( function () {
 });
 Route::post('stripe_payment', [StripePaymentController::class, 'processOneTimeDonation']);
 Route::post('/sms/send', [SMSController::class, 'sendSMS']);
+
+
+ Route::get('/payment/active_charges', [GPCSPaymentChargeController::class,'get_active_payment_charge']);
+Route::middleware('auth:sanctum')->group( function () {
+    Route::get('/payment/charges', [GPCSPaymentChargeController::class,'index']);
+    Route::post('/payment/charge', [GPCSPaymentChargeController::class,'store']);
+    Route::put('/payment/charge/{id}', [GPCSPaymentChargeController::class, 'update']);
+});

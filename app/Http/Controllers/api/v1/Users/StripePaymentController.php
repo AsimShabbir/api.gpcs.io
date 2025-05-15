@@ -27,7 +27,7 @@ class StripePaymentController extends BaseController
         $stripeSecretKey = $this->getStripeKeyForCurrency($request->currency);
         //dd($stripeSecretKey);
         \Stripe\Stripe::setApiKey($stripeSecretKey);
-        $amount =  $request->donation_amount + $request->tipsgiven;
+        $amount =  $request->amount;// + $request->tipsgiven;
         try {
             $paymentIntent = \Stripe\PaymentIntent::create([
                 'amount' => $amount * 100,

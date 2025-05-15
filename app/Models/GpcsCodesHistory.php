@@ -22,6 +22,8 @@ class GpcsCodesHistory extends Model
         'label',
         'is_deleted',
         'verified',
+        'paid',
+        'amount',
     ];
     public function user()
     {

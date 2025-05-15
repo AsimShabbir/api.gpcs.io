@@ -31,6 +31,8 @@ class GpscRequest extends FormRequest
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'label' => 'nullable|string|max:5000',
+           // 'paid' => 'nullable'|'integer'|'max:2',
+            //'amount' => 'nullable'|'integer'|'max:99999',
         ];
     }
     // public function failedValidation(Validator $validator)
