@@ -122,8 +122,9 @@ class GenerateCodeController extends BaseController
         $second_part = $this->generateCode($second_code);
         //dd($stripeSecretKey);
         $gpcs_code = $country_code . "-" . $first_part . "-" . $second_part;
-        DB::beginTransaction();
+
         try {
+            DB::beginTransaction();
           //  $request->save();
           $GpscCodeGenerationRequest = new GpcsCode();
           $GpscCodeGenerationRequest->first_part = $first_part;
@@ -139,14 +140,22 @@ class GenerateCodeController extends BaseController
           $GpscCodeGenerationRequest->paid=$paid;
           $GpscCodeGenerationRequest->amount=$amount;
 
-          $GpscCodeGenerationRequest->save();
+          //$GpscCodeGenerationRequest->save();
+          $saved = $GpscCodeGenerationRequest->save();
+
+            if (!$saved) {
+                DB::rollBack();
+                Log::error('Failed to save GpcsCode.');
+                return $this->renderResponse('Error', ['error' => 'Failed to save code to the database.'], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
           $latestGpcsCode = GpcsCode::where('user_id', $user_id)
             ->latest() // Orders by created_at DESC
             ->first();
 
          $this->save_gpcs_history($latestGpcsCode);
         DB::commit();
-        return $this->renderResponse('Success', ['success' => 'Code added successfully', 'data' => $GpcsCodeGenerationRequest], StatusCode::OK);
+        return $this->renderResponse('Success', ['success' => 'Code added successfully', 'data' => $latestGpcsCode], StatusCode::OK);
 
     } catch (QueryException $exception) {
         DB::rollBack();

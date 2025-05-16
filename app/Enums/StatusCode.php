@@ -10,5 +10,6 @@ final class StatusCode extends Enum
     const UNAUTHORIZED = 403;
     const NOT_FOUND = 404;
     const BAD_REQUEST = 400;
+    const HTTP_INTERNAL_SERVER_ERROR = 500;
 }
 
