@@ -22,6 +22,8 @@ use App\Traits\GetCountryCodeFromDomain;
 use App\Traits\GetCountryCodeFromGoogleMap;
 use App\Http\Requests\Users\GpscCodeGenerationRequest;
 
+use Illuminate\Support\Facades\DB;
+
 class GenerateCodeController extends BaseController
 {
     use GenerateGPCSCode,GetCountryCodeFromDomain,GetCountryCodeFromGoogleMap;
@@ -120,6 +122,7 @@ class GenerateCodeController extends BaseController
         $second_part = $this->generateCode($second_code);
         //dd($stripeSecretKey);
         $gpcs_code = $country_code . "-" . $first_part . "-" . $second_part;
+        DB::beginTransaction();
         try {
           //  $request->save();
           $GpscCodeGenerationRequest = new GpcsCode();
@@ -142,13 +145,18 @@ class GenerateCodeController extends BaseController
             ->first();
 
          $this->save_gpcs_history($latestGpcsCode);
-            return $this->renderResponse('Success',['success' => 'Code added successfully','data' =>$GpscCodeGenerationRequest],StatusCode::OK);
-        } catch (QueryException $exception) {
-            // Check if the exception is related to unique violation
-            if ($exception->errorInfo[1] == 7) {
-                return $this->renderResponseWithErrors('Error', ['error'=> 'Client already exists'], StatusCode::UNPROCESSABLE_ENTITY);
-            }
+        DB::commit();
+        return $this->renderResponse('Success', ['success' => 'Code added successfully', 'data' => $GpcsCodeGenerationRequest], StatusCode::OK);
+
+    } catch (QueryException $exception) {
+        DB::rollBack();
+        if ($exception->errorInfo[1] == 7) {
+            return $this->renderResponseWithErrors('Error', ['error' => 'code already exists'], StatusCode::UNPROCESSABLE_ENTITY);
         }
+        // Optionally log the error for debugging purposes
+        // Log::error("Error saving GpcsCode: " . $exception->getMessage());
+        return $this->renderResponseWithErrors('Error', ['error' => 'An error occurred while saving the code.'], StatusCode::INTERNAL_SERVER_ERROR);
+    }
     }
     public function verified_location(GpscRequest $request)
     {
